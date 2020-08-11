@@ -35,26 +35,44 @@ class Calculator(object):
     def __init__(self):
         LOGGER.info('Init Calculator...')
 
-    def calculateMovingAverage(self, prices, period):
-        dates = list(prices.keys())
-        dates.sort()
-        total = 0.0
-        count = 0
-        average_dict = {}
-        LOGGER.info(dates)
+    def calculator(self, stock_data, days, fn):
+        """
+        시작은 순수 python 계산으로 하자.
+        """
+        LOGGER.info('calculator...')
+        result = None
+        try:
+            if (fn.upper() == 'SMA'):
+                result = self.cal_SMA(stock_data, days)
+            else:
+                LOGGER.info('Not currected site!!')
+        except Exception as e:
+            LOGGER.info(e)
+        return result
 
-        for i, d in enumerate(dates):
-            # search through prior dates and eliminate any that are too old
-            old = [e for e in dates[i-count:i] if (d-e).days > period]
-            total -= sum(prices[o] for o in old)
-            count -= len(old)
+    def cal_SMA(self, prices, period):
+        LOGGER.info('cal_SMA...')
+        try:
+            dates = list(prices.keys())
+            dates.sort()
+            total = 0.0
+            count = 0
+            average_dict = {}
+            LOGGER.info(dates)
 
-            # add in the current date
-            total += prices[d]
-            count += 1
+            for i, d in enumerate(dates):
+                # search through prior dates and eliminate any that are too old
+                old = [e for e in dates[i-count:i] if (d-e).days > period]
+                total -= sum(prices[o] for o in old)
+                count -= len(old)
 
-            average_dict[d] = total / count
+                # add in the current date
+                total += prices[d]
+                count += 1
 
+                average_dict[d] = total / count
+        except Exception as e:
+            LOGGER.info(e)
         return average_dict
 
 
@@ -62,26 +80,28 @@ if __name__ == '__main__':
     init_logging()
 
     # Required
+    # python3 calculator.py --ticker qqq --days 200 --fn sma
     parser = argparse.ArgumentParser()
     parser.add_argument('--ticker', required=True)
     parser.add_argument('--days', required=True)
-    parser.add_argument('--default_contry', required=False)
-    parser.add_argument('--default_site', required=False)
+    parser.add_argument('--fn', required=False)
     args = parser.parse_args()
 
     ticker = 'ticker' in args and args.ticker or None
     days = 'days' in args and int(args.days) or 10
-    default_contry = 'default_contry' in args and args.default_contry or 'us'
-    default_site = 'default_site' in args and args.default_site or 'yahoo'
+    fn = 'fn' in args and args.fn or 'sma'
+
+    # step 1. read list of urls
+    with open('./csv/{}.json'.format(ticker), 'r', errors='surrogatepass') as f:
+        stock_data = json.load(f)
 
     # instance class
-    myDownloader = Downloader()
+    myCal = Calculator()
 
     # fetch data
-    data = myDownloader.fetchh_etf_history(
-        ticker=ticker,
+    data = myCal.calculator(
+        stock_data=stock_data,
         days=days,
-        contry=default_contry,
-        site=default_site)
+        fn=fn)
 
     LOGGER.info('data: {}'.format(data))

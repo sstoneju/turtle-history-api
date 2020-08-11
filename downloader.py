@@ -36,14 +36,14 @@ class Downloader(object):
         LOGGER.info('Init Downloader...')
 
     def fetchh_etf_dict(self, ticker, days, contry, site):
-        '''
+        """
         https://stooq.com/q/d/l/?s=qqq.us&i=d
         https://query1.finance.yahoo.com/v7/finance/download/TQQQ?period1=0&period2=1597017600&interval=1d&events=history
         https://api.nasdaq.com/api/quote/SPY/info?assetclass=etf
         https://www.nasdaq.com/api/v1/historical/SPY/etf/2010-08-10/2020-08-10
 
         이곳에서 데이터를 받아온다. SHY, QQQ BND, AGG, VWO를 기본적으로 돌릴 수 있게 한다.
-        '''
+        """
         LOGGER.info('>> fetchh_etf_history: {}, {}, {}'.format(
             ticker, contry, site))
 
@@ -72,12 +72,16 @@ class Downloader(object):
         return history
 
     def fetchh_etf_np(self, ticker, days, contry, site):
+        """
+        제대로 테스트 안했음..
+        """
         LOGGER.info('>> fetchh_etf_np: {}, {}, {}'.format(
             ticker, contry, site))
-
         try:
+            import numpy as np
+
             target_url = ''
-            history = {}
+            history = None
 
             target_url = self._build_download_url(
                 ticker=ticker,
@@ -87,14 +91,8 @@ class Downloader(object):
 
             with closing(requests.get(target_url, stream=True)) as r:
                 f = (line.decode('utf-8') for line in r.iter_lines())
-                reader = csv.DictReader(f, delimiter=',', quotechar='"')
-
-                for row in reader:
-                    key = row.pop('Date')
-                    if key in history:
-                        # implement your duplicate row handling here
-                        pass
-                    history[key] = self._to_dict(row)
+                reader = csv.reader(f, delimiter=',', quotechar='"')
+                history = np.array(reader)
         except Exception as e:
             LOGGER.info(e)
         return history
@@ -103,9 +101,9 @@ class Downloader(object):
         return json.loads(json.dumps(input_ordered_dict))
 
     def fetch_etf_ticker(self, top=20):
-        '''
+        """
         https://api.nasdaq.com/api/screener/etf?tableonly=true&limit=20
-        '''
+        """
         return
 
     def _build_download_url(self, ticker, days, site, contry):
@@ -117,12 +115,12 @@ class Downloader(object):
             days += (int(days / WEEK) + 5)  # 토, 일해서 2일이 맞지만 여유일로 더 넣음.
 
         try:
-            if site == 'yahoo':
-                '''
+            if site.upper() == 'YAHOO':
+                """
                 period1=0&period2=1597017600&interval=1d&events=history
 
                 current time == deploy country time
-                '''
+                """
                 period1 = today - timedelta(days=days)
                 payload = {'period1': int(period1.timestamp()), 'period2': int(today.timestamp()),
                            'interval': '1d', 'events': 'history'}
