@@ -20,7 +20,7 @@ from datetime import datetime, timedelta
 
 # GLOBAL
 LOGGER = logging.getLogger()
-WEEK = 7
+WPD = 5  # week per day
 
 
 def init_logging():
@@ -35,7 +35,7 @@ class Downloader(object):
     def __init__(self):
         LOGGER.info('Init Downloader...')
 
-    def fetchh_etf_dict(self, ticker, days, contry, site):
+    def fetchh_etf_dict(self, ticker, period, contry, site):
         """
         https://stooq.com/q/d/l/?s=qqq.us&i=d
         https://query1.finance.yahoo.com/v7/finance/download/TQQQ?period1=0&period2=1597017600&interval=1d&events=history
@@ -53,7 +53,7 @@ class Downloader(object):
 
             target_url = self._build_download_url(
                 ticker=ticker,
-                days=days,
+                period=period,
                 site=site,
                 contry=contry)
 
@@ -69,9 +69,9 @@ class Downloader(object):
                     history[key] = self._to_dict(row)
         except Exception as e:
             LOGGER.info(e)
-        return history
+        return self._filter_invild_histories(history)
 
-    def fetchh_etf_np(self, ticker, days, contry, site):
+    def fetchh_etf_np(self, ticker, period, contry, site):
         """
         제대로 테스트 안했음..
         """
@@ -85,7 +85,7 @@ class Downloader(object):
 
             target_url = self._build_download_url(
                 ticker=ticker,
-                days=days,
+                period=period,
                 site=site,
                 contry=contry)
 
@@ -106,13 +106,19 @@ class Downloader(object):
         """
         return
 
-    def _build_download_url(self, ticker, days, site, contry):
-        LOGGER.info('>> _build_download_url')
+    def _build_download_url(self, ticker, period, site, contry):
+        LOGGER.info('>> _build_download_url: {} -> {}'.format(ticker, period))
         today = datetime.now()
-        LOGGER.info('curr_timestamp: {}'.format(today))
+        LOGGER.info('today: {}'.format(today))
 
-        if int(days % WEEK) >= 1:
-            days += (int(days / WEEK) + 5)  # 토, 일해서 2일이 맞지만 여유일로 더 넣음.
+        if int(period / WPD) >= 1:
+            """
+            4 -> 4
+            7 -> 9
+            10 -> 14
+            """
+            period += int(period / WPD) * 2 + 1  # 시장은 5일 일주일은 7일, 어제부터니까 +1일
+        LOGGER.info('period: {}'.format(period))
 
         try:
             if site.upper() == 'YAHOO':
@@ -121,7 +127,7 @@ class Downloader(object):
 
                 current time == deploy country time
                 """
-                period1 = today - timedelta(days=days)
+                period1 = today - timedelta(days=period)
                 payload = {'period1': int(period1.timestamp()), 'period2': int(today.timestamp()),
                            'interval': '1d', 'events': 'history'}
                 base_url = "https://query1.finance.yahoo.com/v7/finance/download/{}?".format(
@@ -134,8 +140,19 @@ class Downloader(object):
             else:
                 LOGGER.info('Not currected site!!')
         except Exception as e:
-            LOGGER.info(e)
+            LOGGER.info('[ERROR] _build_download_url: {}'.format(e))
         return base_url
+
+    def _filter_invild_histories(self, data):
+        LOGGER.info('_filter_invild_histories...')
+        try:
+            build_data = {}
+            for key, value in data.items():
+                if value['Open'] != 'null':
+                    build_data[key] = value
+        except Exception as e:
+            LOGGER.info('[ERROR] filter_invild_histories: {}'.format(e))
+        return build_data
 
 
 if __name__ == '__main__':
@@ -144,13 +161,13 @@ if __name__ == '__main__':
     # Required
     parser = argparse.ArgumentParser()
     parser.add_argument('--ticker', required=True)
-    parser.add_argument('--days', required=True)
+    parser.add_argument('--period', required=True)
     parser.add_argument('--default_contry', required=False)
     parser.add_argument('--default_site', required=False)
     args = parser.parse_args()
 
     ticker = 'ticker' in args and args.ticker or None
-    days = 'days' in args and int(args.days) or 10
+    period = 'period' in args and int(args.period) or 10
     default_contry = 'default_contry' in args and args.default_contry or 'us'
     default_site = 'default_site' in args and args.default_site or 'yahoo'
 
@@ -160,10 +177,9 @@ if __name__ == '__main__':
     # fetch data
     data = myDownloader.fetchh_etf_dict(
         ticker=ticker,
-        days=days,
+        period=period,
         contry=default_contry,
         site=default_site)
 
     with open('./csv/{}.json'.format(ticker), 'w') as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
-    # LOGGER.info('data: {}'.format(data))

@@ -35,7 +35,7 @@ class Calculator(object):
     def __init__(self):
         LOGGER.info('Init Calculator...')
 
-    def calculator(self, stock_data, days, fn):
+    def calculator(self, stock_data, period, fn):
         """
         시작은 순수 python 계산으로 하자.
         """
@@ -43,37 +43,50 @@ class Calculator(object):
         result = None
         try:
             if (fn.upper() == 'SMA'):
-                result = self.cal_SMA(stock_data, days)
+                result = self.cal_SMA(stock_data, period)
             else:
                 LOGGER.info('Not currected site!!')
         except Exception as e:
             LOGGER.info(e)
         return result
 
-    def cal_SMA(self, prices, period):
+    def cal_SMA(self, data, period):
+        """
+        이 기능은 최초 발행일부터 오늘까지 데이터가 있다고 가정하고
+        SMA를 구할 수 있는 함수로 작성하기
+        """
         LOGGER.info('cal_SMA...')
         try:
-            dates = list(prices.keys())
+            dates = list(data.keys())
             dates.sort()
-            total = 0.0
-            count = 0
             average_dict = {}
-            LOGGER.info(dates)
+            LOGGER.info('dates length: {}'.format(len(dates)))
 
-            for i, d in enumerate(dates):
-                # search through prior dates and eliminate any that are too old
-                old = [e for e in dates[i-count:i] if (d-e).days > period]
-                total -= sum(prices[o] for o in old)
-                count -= len(old)
+            for index, date in enumerate(dates):
+                index += 1
+                # period = period - 1  # incloud today..
+                period_dates = [day for day in dates[(
+                    index-period):index] if index >= period]
+                total = sum(float(data[date]['Close'])
+                            for date in period_dates)
+                SMA = total / int(period)
+                average_dict[date] = SMA
+                # LOGGER.info('count: {}, date: {}, SMA:{}, curr:{}'.format(index, date, SMA, data[date]['Close']))
 
-                # add in the current date
-                total += prices[d]
-                count += 1
-
-                average_dict[d] = total / count
         except Exception as e:
-            LOGGER.info(e)
-        return average_dict
+            LOGGER.info('[ERROR] cal_SMA: {}'.format(e))
+        return self._filter_invild_MA(average_dict)
+
+    def _filter_invild_MA(self, data):
+        LOGGER.info('_filter_invild_MA...')
+        try:
+            build_data = {}
+            for key, value in data.items():
+                if value != 0:
+                    build_data[key] = value
+        except Exception as e:
+            LOGGER.info('[ERROR] _filter_invild_MA: {}'.format(e))
+        return build_data
 
 
 if __name__ == '__main__':
@@ -83,13 +96,13 @@ if __name__ == '__main__':
     # python3 calculator.py --ticker qqq --days 200 --fn sma
     parser = argparse.ArgumentParser()
     parser.add_argument('--ticker', required=True)
-    parser.add_argument('--days', required=True)
+    parser.add_argument('--period', required=True)
     parser.add_argument('--fn', required=False)
     args = parser.parse_args()
 
-    ticker = 'ticker' in args and args.ticker or None
-    days = 'days' in args and int(args.days) or 10
-    fn = 'fn' in args and args.fn or 'sma'
+    ticker = ('ticker' in args) and args.ticker or None
+    period = ('period' in args) and int(args.period) or 10
+    fn = ('fn' in args) and args.fn or 'sma'
 
     # step 1. read list of urls
     with open('./csv/{}.json'.format(ticker), 'r', errors='surrogatepass') as f:
@@ -101,7 +114,10 @@ if __name__ == '__main__':
     # fetch data
     data = myCal.calculator(
         stock_data=stock_data,
-        days=days,
+        period=period,
         fn=fn)
 
     LOGGER.info('data: {}'.format(data))
+
+    with open('./csv/{}_graph.json'.format(ticker), 'w') as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
