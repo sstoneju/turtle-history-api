@@ -18,3 +18,7 @@ var/
 
 # Serverless directories
 .serverless
+
+# customer ignore
+csv/*
+.vscode
