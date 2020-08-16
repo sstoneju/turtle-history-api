@@ -15,7 +15,7 @@ fetch.agg:
 	python3 downloader.py --ticker agg --period 365
 
 fetch.kakao:
-	python3 downloader.py --ticker 035720.KS --period 365
+	python3 downloader.py --ticker 035720.KS --period 1000
 
 ################## Calculator ##################
 cal.qqq:
@@ -25,7 +25,7 @@ cal.agg:
 	python3 calculator.py --ticker agg --period 50 --fn sma
 
 cal.kakao:
-	python3 calculator.py --ticker 035720.KS --period 50 --fn sma
+	python3 calculator.py --ticker 035720.KS --period 180 --fn sma
 
 ################## Graph ##################
 graph.agg:

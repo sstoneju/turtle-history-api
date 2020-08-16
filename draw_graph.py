@@ -31,10 +31,7 @@ def draw_sma(data):
     for key, value in data.items():
         build_data.append(value)
     title = [val for val in data]
-    LOGGER.info('title_data: {}'.format(title))
-    LOGGER.info('extract_data: {}'.format(build_data))
-    parse_log = np.log(build_data)
-    plt.plot(parse_log)
+    plt.plot(build_data)
     plt.show()
     return
 
@@ -55,13 +52,3 @@ if __name__ == '__main__':
         stock_data = json.load(f)
 
     draw_sma(stock_data)
-    # # instance class
-    # myCal = Calculator()
-
-    # # fetch data
-    # data = myCal.calculator(
-    #     stock_data=stock_data,
-    #     period=period,
-    #     fn=fn)
-
-    # LOGGER.info('data: {}'.format(data))
