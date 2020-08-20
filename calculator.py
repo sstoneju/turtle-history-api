@@ -13,11 +13,6 @@ import csv
 from contextlib import closing
 from datetime import datetime, timedelta
 
-# import pandas as pd
-# import pdb
-# import glob
-# from tqdm import tqdm
-
 # GLOBAL
 LOGGER = logging.getLogger()
 WEEK = 7
@@ -35,7 +30,7 @@ class Calculator(object):
     def __init__(self):
         LOGGER.info('Init Calculator...')
 
-    def calculator(self, stock_data, period, fn):
+    def calculate(self, stock_data, period, fn):
         """
         시작은 순수 python 계산으로 하자.
         """
@@ -43,14 +38,14 @@ class Calculator(object):
         result = None
         try:
             if (fn.upper() == 'SMA'):
-                result = self.cal_SMA(stock_data, period)
+                result = self._cal_SMA(stock_data, period)
             else:
                 LOGGER.info('Not currected site!!')
         except Exception as e:
             LOGGER.info(e)
         return result
 
-    def cal_SMA(self, data, period):
+    def _cal_SMA(self, data, period):
         """
         이 기능은 최초 발행일부터 오늘까지 데이터가 있다고 가정하고
         SMA를 구할 수 있는 함수로 작성하기
@@ -112,7 +107,7 @@ if __name__ == '__main__':
     myCal = Calculator()
 
     # fetch data
-    data = myCal.calculator(
+    data = myCal.calculate(
         stock_data=stock_data,
         period=period,
         fn=fn)

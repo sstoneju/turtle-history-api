@@ -35,7 +35,7 @@ class Downloader(object):
     def __init__(self):
         LOGGER.info('Init Downloader...')
 
-    def fetchh_etf_dict(self, ticker, period, contry, site):
+    def fetchh_etf_dict(self, ticker, period, contry='us', site='yahoo'):
         """
         https://stooq.com/q/d/l/?s=qqq.us&i=d
         https://query1.finance.yahoo.com/v7/finance/download/TQQQ?period1=0&period2=1597017600&interval=1d&events=history
@@ -100,7 +100,7 @@ class Downloader(object):
     def _to_dict(self, input_ordered_dict):
         return json.loads(json.dumps(input_ordered_dict))
 
-    def fetch_etf_ticker(self, top=20):
+    def fetch_ticker(self, top=20):
         """
         https://api.nasdaq.com/api/screener/etf?tableonly=true&limit=20
         """
@@ -117,7 +117,8 @@ class Downloader(object):
             7 -> 9
             10 -> 14
             """
-            period += int(period / WPD) * 2 + 1  # 시장은 5일 일주일은 7일, 어제부터니까 +1일
+            # 시장은 5일 일주일은 7일, 공휴일을 껴야해서 padding 20일
+            period += int(period / WPD) * 2 + 20
         LOGGER.info('period: {}'.format(period))
 
         try:

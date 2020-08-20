@@ -33,3 +33,13 @@ graph.agg:
 
 graph.kakao:
 	python3 draw_graph.py --ticker 035720.KS
+
+################## Msg ##################
+msg.agg:
+	python3 msg_maker.py --ticker agg --period 180
+
+################## Alarm ##################
+alarm.agg:
+	python3 alarm_service.py
+
+
