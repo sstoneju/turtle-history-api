@@ -9,7 +9,7 @@ import time
 from urllib.parse import urlencode
 import re
 import requests
-from msg_maker import MsgMaker
+from .msg_maker import MsgMaker
 
 # GLOBAL
 LOGGER = logging.getLogger()
@@ -29,6 +29,7 @@ def alarm_to_slack(content):
     """
     # period에 해당하는 데이터를 가지고 온다.
     try:
+        init_logging()
         url = os.environ['alarmUrl'] or ''
         response = requests.post(url, json=content)
         LOGGER.info('{}'.format(response))

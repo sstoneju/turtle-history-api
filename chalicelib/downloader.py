@@ -13,11 +13,6 @@ import csv
 from contextlib import closing
 from datetime import datetime, timedelta
 
-# import pandas as pd
-# import pdb
-# import glob
-# from tqdm import tqdm
-
 # GLOBAL
 LOGGER = logging.getLogger()
 WPD = 5  # week per day
@@ -33,6 +28,7 @@ def init_logging():
 
 class Downloader(object):
     def __init__(self):
+        init_logging()
         LOGGER.info('Init Downloader...')
 
     def fetchh_etf_dict(self, ticker, period, contry='us', site='yahoo'):

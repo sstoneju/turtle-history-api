@@ -28,6 +28,7 @@ def init_logging():
 
 class Calculator(object):
     def __init__(self):
+        init_logging()
         LOGGER.info('Init Calculator...')
 
     def calculate(self, stock_data, period, fn):

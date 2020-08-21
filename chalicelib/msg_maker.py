@@ -8,11 +8,10 @@ import os
 import time
 from urllib.parse import urlencode
 import re
-import requests
 import csv
 from datetime import datetime, timedelta
-from downloader import Downloader
-from calculator import Calculator
+from .downloader import Downloader
+from .calculator import Calculator
 
 # GLOBAL
 LOGGER = logging.getLogger()
