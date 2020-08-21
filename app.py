@@ -46,8 +46,6 @@ def schedule_tickers():
     from chalicelib.alarm_service import alarm_to_slack
     '''
     cron(min > hour > day(일) > month > weekday(요일))
-    us-east-1 시간이 적용된다. 하루의 장이 마감이 되면
-    tickerList 읽어서 Slack으로 알람을 쏴준다.
     '''
     ticker_str = os.environ['tickerList']  # `{"AGG":200,"BND":200}`
     ticker_list = json.loads(ticker_str)
