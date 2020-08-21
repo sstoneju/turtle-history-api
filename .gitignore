@@ -25,3 +25,4 @@ csv/*
 .vscode
 .chalice/deployments/
 .chalice/venv/
+.chalice/config.json
