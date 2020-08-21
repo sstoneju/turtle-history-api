@@ -23,3 +23,5 @@ var/
 # customer ignore
 csv/*
 .vscode
+.chalice/deployments/
+.chalice/venv/

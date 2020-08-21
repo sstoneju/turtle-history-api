@@ -23,12 +23,13 @@ def init_logging():
     LOGGER.addHandler(console)
 
 
-def alarm_to_slack(url, content):
+def alarm_to_slack(content):
     """
     해당 url(slack)으로 content를 전송한다.
     """
     # period에 해당하는 데이터를 가지고 온다.
     try:
+        url = os.environ['alarmUrl'] or ''
         response = requests.post(url, json=content)
         LOGGER.info('{}'.format(response))
     except Exception as e:
