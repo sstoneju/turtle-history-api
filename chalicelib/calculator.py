@@ -39,7 +39,7 @@ class Calculator(object):
         result = None
         try:
             if (fn.upper() == 'SMA'):
-                result = self._cal_SMA(stock_data, period)
+                result = self._cal_SMA(stock_data, int(period))
             else:
                 LOGGER.info('Not currected site!!')
         except Exception as e:
@@ -59,18 +59,19 @@ class Calculator(object):
             LOGGER.info('dates length: {}'.format(len(dates)))
 
             for index, date in enumerate(dates):
-                index += 1
+                index = int(index) + 1
                 # period = period - 1  # incloud today..
                 period_dates = [day for day in dates[(
                     index-period):index] if index >= period]
-                total = sum(float(data[date]['Close'])
-                            for date in period_dates)
+                total = sum([float(data[date]['Close'])
+                             for date in period_dates])
                 SMA = total / int(period)
                 average_dict[date] = SMA
                 # LOGGER.info('count: {}, date: {}, SMA:{}, curr:{}'.format(index, date, SMA, data[date]['Close']))
 
         except Exception as e:
             LOGGER.info('[ERROR] cal_SMA: {}'.format(e))
+            return {}
         return self._filter_invild_MA(average_dict)
 
     def _filter_invild_MA(self, data):

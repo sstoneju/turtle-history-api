@@ -7,6 +7,16 @@
       "role_name": "StockAlarm-dev"
     },
     {
+      "name": "schedule_tickers",
+      "resource_type": "lambda_function",
+      "lambda_arn": "arn:aws:lambda:us-east-1:775382599937:function:StockAlarm-dev-schedule_tickers"
+    },
+    {
+      "name": "schedule_tickers-event",
+      "resource_type": "cloudwatch_event",
+      "rule_name": "StockAlarm-dev-schedule_tickers-event"
+    },
+    {
       "name": "api_handler",
       "resource_type": "lambda_function",
       "lambda_arn": "arn:aws:lambda:us-east-1:775382599937:function:StockAlarm-dev"

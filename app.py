@@ -40,7 +40,7 @@ def alarm_tickers():
     return {'result': 'success'}
 
 
-@app.schedule('cron(30 4 * * *)')
+@app.schedule('cron(30 4 * * ? 1-5)')
 def schedule_tickers():
     from chalicelib.msg_maker import MsgMaker
     from chalicelib.alarm_service import alarm_to_slack

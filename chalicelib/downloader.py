@@ -49,7 +49,7 @@ class Downloader(object):
 
             target_url = self._build_download_url(
                 ticker=ticker,
-                period=period,
+                period=int(period),
                 site=site,
                 contry=contry)
 
