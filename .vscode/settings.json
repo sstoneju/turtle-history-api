@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "/Users/tyler/miniconda3/envs/condaEnv/bin/python"
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true
 }

@@ -6,10 +6,10 @@ import json
 import logging
 import os
 import time
+import requests
 from urllib.parse import urlencode
 import re
-import requests
-from .msg_maker import MsgMaker
+from msg_maker import MsgMaker
 
 # GLOBAL
 LOGGER = logging.getLogger()
@@ -43,4 +43,4 @@ if __name__ == '__main__':
     url = ''
     content = {'pretext': 'Alarm for MA180',
                'text': 'Ticker: AGG \nClose: 118.3499 \nMA180: 115.8491 \n*Let us to Keep shares*'}
-    alarm_to_slack(url, content)
+    alarm_to_slack(content)

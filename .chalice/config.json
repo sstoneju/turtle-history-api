@@ -5,8 +5,8 @@
     "dev": {
       "api_gateway_stage": "api",
       "environment_variables": {
-        "tickerList": "{\"AGG\":\"180\",\"BND\":\"180\",\"QQQ\":\"180\"}",
-        "alarmUrl": "https://hooks.slack.com/services/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"
+        "tickerList": "",
+        "alarmUrl": ""
       }
     }
   }
