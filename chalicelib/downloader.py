@@ -16,6 +16,7 @@ from datetime import datetime, timedelta
 # GLOBAL
 LOGGER = logging.getLogger()
 WPD = 5  # week per day
+hello = 5
 
 
 def init_logging():
