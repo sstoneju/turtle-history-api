@@ -6,6 +6,8 @@ import json
 import logging
 import os
 import time
+from datetime import date, datetime, timedelta
+
 
 app = Chalice(app_name='StockAlarm')
 
@@ -18,6 +20,33 @@ def index():
 @app.route('/meta')
 def call_meta():
     return app.current_request.to_dict()
+
+
+@app.route('/history/{ticker}', methods=['GET'])
+def history_tickers(ticker=None):
+    from chalicelib.downloader import Downloader
+
+    '''
+    ticker를 받아서 history를 보여준다.
+    https://aws.github.io/chalice/tutorials/basicrestapi.html 사용법
+
+    start_date=20010505
+    end_date=20201010
+    '''
+
+    if ticker is None:
+        return {'error':'Ticker is None...'}
+
+    today = datetime.now()
+    params = app.current_request.query_params if app.current_request.query_params else {}
+
+    start_date = params['start_date'] if 'start_date' in params else today - timedelta(weeks=52)
+    end_date = params['end_date'] if 'end_date' in params else today
+
+    downloader =  Downloader()
+    histries = downloader.fetchh_etf_dict(ticker=ticker, start_date=start_date, end_date=end_date)
+
+    return {'result': 'success', 'list':histries}
 
 
 @app.route('/alarm', methods=['GET'])
