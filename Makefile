@@ -1,8 +1,14 @@
 ################## deploy ##################
-deploy.tyler:
-	sls deploy --force --profile tyler --stage dev
-deploy.tyler.prod:
-	sls deploy --force --profile tyler --stage prod
+sls.sstoneju:
+	sls deploy --force --profile sstoneju --stage dev
+sls.sstoneju.prod:
+	sls deploy --force --profile sstoneju --stage prod
+
+################## deploy ##################
+deploy.sstoneju:
+	chalice deploy --profile sstoneju --stage dev
+deploy.sstoneju.prod:
+	chalice deploy --profile sstoneju --stage prod
 
 ################## Component ##################
 fetch.qqq:
