@@ -3,23 +3,23 @@
     {
       "name": "default-role",
       "resource_type": "iam_role",
-      "role_arn": "arn:aws:iam::775382599937:role/StockAlarm-dev",
-      "role_name": "StockAlarm-dev"
+      "role_arn": "arn:aws:iam::775382599937:role/turtle-history-api-dev",
+      "role_name": "turtle-history-api-dev"
     },
     {
       "name": "schedule_tickers",
       "resource_type": "lambda_function",
-      "lambda_arn": "arn:aws:lambda:us-east-1:775382599937:function:StockAlarm-dev-schedule_tickers"
+      "lambda_arn": "arn:aws:lambda:us-east-1:775382599937:function:turtle-history-api-dev-schedule_tickers"
     },
     {
       "name": "schedule_tickers-event",
       "resource_type": "cloudwatch_event",
-      "rule_name": "StockAlarm-dev-schedule_tickers-event"
+      "rule_name": "turtle-history-api-dev-schedule_tickers-event"
     },
     {
       "name": "api_handler",
       "resource_type": "lambda_function",
-      "lambda_arn": "arn:aws:lambda:us-east-1:775382599937:function:StockAlarm-dev"
+      "lambda_arn": "arn:aws:lambda:us-east-1:775382599937:function:turtle-history-api-dev"
     },
     {
       "name": "rest_api",

@@ -7,8 +7,7 @@ import logging
 import os
 import time
 
-app = Chalice(app_name='StockAlarm')
-
+app = Chalice(app_name='turtle-history-api')
 
 @app.route('/')
 def index():

@@ -1,6 +1,6 @@
 {
-  "version": "2.0",
-  "app_name": "StockAlarm",
+  "version": "1.0",
+  "app_name": "turtle-history-api",
   "stages": {
     "dev": {
       "api_gateway_stage": "api",
