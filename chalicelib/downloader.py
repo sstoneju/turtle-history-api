@@ -15,8 +15,6 @@ from datetime import datetime, timedelta
 
 # GLOBAL
 LOGGER = logging.getLogger()
-WPD = 5  # week per day
-
 
 def init_logging():
     LOGGER.setLevel(logging.INFO)
@@ -31,7 +29,7 @@ class Downloader(object):
         init_logging()
         LOGGER.info('Init Downloader...')
 
-    def fetchh_etf_dict(self, ticker, period, contry='us', site='yahoo'):
+    def fetchh_etf_dict(self, ticker, start_date, end_date, contry='us', site='yahoo'):
         """
         https://stooq.com/q/d/l/?s=qqq.us&i=d
         https://query1.finance.yahoo.com/v7/finance/download/TQQQ?period1=0&period2=1597017600&interval=1d&events=history
@@ -47,9 +45,10 @@ class Downloader(object):
             target_url = ''
             history = {}
 
-            target_url = self._build_download_url(
+            target_url = self.build_download_url(
                 ticker=ticker,
-                period=int(period),
+                start_date=start_date,
+                end_date=end_date,
                 site=site,
                 contry=contry)
 
@@ -65,7 +64,7 @@ class Downloader(object):
                     history[key] = self._to_dict(row)
         except Exception as e:
             LOGGER.info(e)
-        return self._filter_invild_histories(history)
+        return self.filter_invild_histories(history)
 
     def fetchh_etf_np(self, ticker, period, contry, site):
         """
@@ -79,9 +78,9 @@ class Downloader(object):
             target_url = ''
             history = None
 
-            target_url = self._build_download_url(
+            target_url = self.build_download_url(
                 ticker=ticker,
-                period=period,
+                end_date=period,
                 site=site,
                 contry=contry)
 
@@ -102,30 +101,17 @@ class Downloader(object):
         """
         return
 
-    def _build_download_url(self, ticker, period, site, contry):
-        LOGGER.info('>> _build_download_url: {} -> {}'.format(ticker, period))
+    def build_download_url(self, ticker, start_date, end_date, site, contry):
+        LOGGER.info('>> _build_download_url: {} -> {}'.format(ticker, end_date))
         today = datetime.now()
         LOGGER.info('today: {}'.format(today))
-
-        if int(period / WPD) >= 1:
-            """
-            4 -> 4
-            7 -> 9
-            10 -> 14
-            """
-            # 시장은 5일 일주일은 7일, 공휴일을 껴야해서 padding 20일
-            period += int(period / WPD) * 2 + 20
-        LOGGER.info('period: {}'.format(period))
 
         try:
             if site.upper() == 'YAHOO':
                 """
                 period1=0&period2=1597017600&interval=1d&events=history
-
-                current time == deploy country time
                 """
-                period1 = today - timedelta(days=period)
-                payload = {'period1': int(period1.timestamp()), 'period2': int(today.timestamp()),
+                payload = {'period1': int(start_date.timestamp()), 'period2': int(end_date.timestamp()),
                            'interval': '1d', 'events': 'history'}
                 base_url = "https://query1.finance.yahoo.com/v7/finance/download/{}?".format(
                     ticker.upper())
@@ -140,7 +126,7 @@ class Downloader(object):
             LOGGER.info('[ERROR] _build_download_url: {}'.format(e))
         return base_url
 
-    def _filter_invild_histories(self, data):
+    def filter_invild_histories(self, data):
         LOGGER.info('_filter_invild_histories...')
         try:
             build_data = {}
@@ -174,7 +160,7 @@ if __name__ == '__main__':
     # fetch data
     data = myDownloader.fetchh_etf_dict(
         ticker=ticker,
-        period=period,
+        end_date=period,
         contry=default_contry,
         site=default_site)
 
