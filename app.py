@@ -11,6 +11,15 @@ from datetime import date, datetime, timedelta
 
 app = Chalice(app_name='turtle-history-api')
 
+@app.lambda_function()
+def handler(event, context):
+    message = 'Hello {} {}!'.format(event['first_name'],
+                                    event['last_name'])
+    return { 
+        'message' : message
+    } 
+
+
 @app.route('/')
 def index():
     return {'hello': 'world'}
@@ -21,7 +30,7 @@ def call_meta():
     return app.current_request.to_dict()
 
 
-@app.route('/history/{ticker}', methods=['GET'])
+@app.route('/history/{ticker}')
 def history_tickers(ticker=None):
     from chalicelib.downloader import Downloader
 
@@ -74,7 +83,6 @@ def alarm_tickers():
     return {'result': 'success'}
 
 
-@app.schedule('cron(30 4 * * ? 1-5)')
 def schedule_tickers():
     from chalicelib.msg_maker import MsgMaker
     from chalicelib.alarm_service import alarm_to_slack
