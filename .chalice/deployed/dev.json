@@ -19,8 +19,8 @@
     {
       "name": "rest_api",
       "resource_type": "rest_api",
-      "rest_api_id": "kwomsvf65h",
-      "rest_api_url": "https://kwomsvf65h.execute-api.us-east-1.amazonaws.com/api/"
+      "rest_api_id": "k525hjwkpd",
+      "rest_api_url": "https://k525hjwkpd.execute-api.us-east-1.amazonaws.com/api/"
     }
   ],
   "schema_version": "2.0",

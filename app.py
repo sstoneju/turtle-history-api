@@ -8,17 +8,21 @@ import os
 import time
 from datetime import date, datetime, timedelta
 
-
 app = Chalice(app_name='turtle-history-api')
 
 @app.lambda_function()
-def handler(event, context):
-    message = 'Hello {} {}!'.format(event['first_name'],
-                                    event['last_name'])
+@app.route('/history', methods=['POST'])
+@app.route('/history', methods=['GET'])
+def handler(event=None, context=None):
+    http_param = app.current_request.to_dict()
+    print('event: {}'.format(event))
+    print('http_param: {}'.format(http_param))
+    message = json.dumps(event)
+    context = '{}'.format(context)
     return { 
-        'message' : message
+        'message' : message,
+        'context' : context
     } 
-
 
 @app.route('/')
 def index():
@@ -30,7 +34,7 @@ def call_meta():
     return app.current_request.to_dict()
 
 
-@app.route('/history/{ticker}')
+@app.route('/history-web/{ticker}')
 def history_tickers(ticker=None):
     from chalicelib.downloader import Downloader
 
@@ -62,40 +66,3 @@ def convert_string_to_date(str_date:str, form='%Y%m%d'):
     str_date = ''.join(str_date.split('/')) if str_date.split('/') else str_date
     date_obj = datetime.strptime(str_date, form)
     return date_obj
-
-@app.route('/alarm', methods=['GET'])
-def alarm_tickers():
-    from chalicelib.msg_maker import MsgMaker
-    from chalicelib.alarm_service import alarm_to_slack
-    '''
-    us-east-1 시간이 적용된다. 하루의 장이 마감이 되면
-    tickerList 읽어서 Slack으로 알람을 쏴준다.
-    '''
-    ticker_str = os.environ['tickerList']  # `{"AGG":200,"BND":200}`
-    ticker_list = json.loads(ticker_str)
-
-    msg_maker = MsgMaker()
-
-    for key, value in ticker_list.items():
-        bind_content = msg_maker.make_today_MA(key, value)
-        alarm_to_slack(bind_content)
-
-    return {'result': 'success'}
-
-
-def schedule_tickers():
-    from chalicelib.msg_maker import MsgMaker
-    from chalicelib.alarm_service import alarm_to_slack
-    '''
-    cron(min > hour > day(일) > month > weekday(요일))
-    '''
-    ticker_str = os.environ['tickerList']  # `{"AGG":200,"BND":200}`
-    ticker_list = json.loads(ticker_str)
-
-    msg_maker = MsgMaker()
-
-    for key, value in ticker_list.items():
-        bind_content = msg_maker.make_today_MA(key, value)
-        alarm_to_slack(bind_content)
-
-    return {'result': 'success'}
