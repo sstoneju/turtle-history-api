@@ -19,10 +19,10 @@ def handler(event=None, context=None):
     print('http_param: {}'.format(http_param))
     message = json.dumps(event)
     context = '{}'.format(context)
-    return { 
+    return {
         'message' : message,
         'context' : context
-    } 
+    }
 
 @app.route('/')
 def index():
