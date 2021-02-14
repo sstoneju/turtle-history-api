@@ -1,14 +1,11 @@
 # Turtle-history-api
-### Basic setting on windows
 ```sh
-# python venv create (at mac, windoww both)
-$ python -m venv .venv
-# venv run
-$ .\.venv\Scripts\activate
-# package install
-$ pip install -r requirement.txt
-# package export
-$ pip freeze > requirement.txt
-# run server
-$ flask run
+# Set the virtual environment.
+$ python3 -m venv .venv
+# run venv
+$ source .venv/bin/activate
+# inatall requirement
+$ pip3 install -r requirements.txt
+# export to requirements.txt
+$ pip3 freeze > requirements.txt
 ```
