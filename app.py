@@ -5,10 +5,12 @@ import sys
 import json
 import time
 from loguru import logger
-from service import history_service
 from datetime import date, datetime, timedelta
 from jsonschema import validate
 from jsonschema.exceptions import ValidationError
+import numpy
+
+import history_service
 
 # app = Chalice(app_name='turtle-history-api')
 
@@ -48,3 +50,14 @@ def __validate_arguments(function_name, arguments_json, json_schema):
     except ValidationError as err:
         logger.error("Invalid {} request with args: {}. Exception: {}".format(function_name, arguments_json, err))
         return {'isValid': False, 'error': err.message}
+
+
+def __call_numpy(method, args):
+    """
+    Call a NumPy method with a given set of arguments
+    :param method: NumPy method to call
+    :param args: Arguments for the provided NumPy method
+    :return: Result from NumPy
+    """
+    logger.info("Calling numpy.{} with args: {}".format(method, args))
+    return {'result': getattr(numpy, method)(*args)}
