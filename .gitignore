@@ -20,6 +20,8 @@ var/
 
 # Serverless directories
 .serverless
+.aws-sam
+.aws-sam/*
 
 # customer ignore
 csv/*
