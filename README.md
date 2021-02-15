@@ -1,5 +1,14 @@
 # Turtle-history-api
-If you’ve deployed your application using `chalice deploy`, 
-you can test the REST API by making requests to the Rest API URL, shown in the output of `chalice deploy`, 
-in our example that would be https://abcd.execute-api.us-west-2.amazonaws.com/api/. 
-If you’re using `chalice local`, you’ll make requests to http://localhost:8000/
+- SAM(cloudFormation)을 이용해서 serverless의 배포에 사용하려고한다.
+    - SAM은 서버의 docker와 같은 역할로 Serverless 서비스들의 배포와 스팩을 specific하게 설정이 가능하다.
+
+```sh
+# Set the virtual environment.
+$ python3 -m venv .venv
+# run venv
+$ source .venv/bin/activate
+# inatall requirement
+$ pip3 install -r requirements.txt
+# export to requirements.txt
+$ pip3 freeze > requirements.txt
+```
